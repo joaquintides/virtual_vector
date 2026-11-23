@@ -903,8 +903,8 @@ private:
     const_iterator pos, Incrementable first, Sentinel last,
     Integer n, Construct construct_, Assign assign_)
   {
-    const auto s = static_cast<size_type>(n),
-               tail = static_cast<size_type>(end() - pos);
+    const auto s = static_cast<difference_type>(n),
+               tail = static_cast<difference_type>(end() - pos);
     const auto p = data_ptr() + (pos - begin());
     reserve_for_insertion(s);
     if(s == 0) { 
