@@ -494,7 +494,7 @@ public:
   {
     if(n >= size_) boost::throw_exception(
       std::out_of_range("boost::container::virtual_vector::at"));
-    return (*this)[static_cast<difference_type>(n)];
+    return (*this)[n];
   }
 
   const_reference at(size_type n) const
@@ -903,8 +903,8 @@ private:
     const_iterator pos, Incrementable first, Sentinel last,
     Integer n, Construct construct_, Assign assign_)
   {
-    const auto s = static_cast<difference_type>(n),
-               tail = static_cast<difference_type>(end() - pos);
+    const auto s = static_cast<size_type>(n),
+               tail = static_cast<size_type>(end() - pos);
     const auto p = data_ptr() + (pos - begin());
     reserve_for_insertion(s);
     if(s == 0) { 
@@ -921,7 +921,7 @@ private:
           std::move(*q));
         ++size_;
       }
-      std::move_backward(p, pe - s, pe);
+      std::move_backward(p, pe - static_cast<difference_type>(s), pe);
       for(auto q = p; first != last; ++q, ++first) {
         assign_(boost::to_address(q), first);
       }

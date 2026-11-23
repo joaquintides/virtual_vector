@@ -626,9 +626,10 @@ void test()
     BOOST_TEST(it == x.cend());
     it = x.insert(
       x.end(), rng.begin() + (difference_type)(rng.size() * 2 / 3), rng.end());
-    it = x.insert(it, rng.begin(), rng.begin() + rng.size() * 1 / 3);
     it = x.insert(
-      it + rng.size() * 1 / 3,
+      it, rng.begin(), rng.begin() + (difference_type)(rng.size() * 1 / 3));
+    it = x.insert(
+      it + (difference_type)(rng.size() * 1 / 3),
       rng.begin() + (difference_type)(rng.size() * 1 / 3),
       rng.begin() + (difference_type)(rng.size() * 2 / 3));
     BOOST_TEST_EQ(it - x.cbegin(), (difference_type)(rng.size() * 1 / 3));
