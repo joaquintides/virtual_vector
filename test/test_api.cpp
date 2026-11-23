@@ -723,12 +723,12 @@ void test()
     test_equal(x, std::vector<value_type>{5, 6});
   }
   {
-    std::forward_list<value_type> rng{9, 10, 11};
-    Vector x{mc, rng.begin(), rng.end()};
+    std::forward_list<value_type> fl{9, 10, 11};
+    Vector x{mc, fl.begin(), fl.end()};
     std::vector<value_type> expected{9, 10, 11};
     test_equal(x, expected);
-    auto it = x.insert(x.cbegin() + 1, rng.begin(), rng.end());
-    expected.insert(expected.begin() + 1, rng.begin(), rng.end());
+    auto it = x.insert(x.cbegin() + 1, fl.begin(), fl.end());
+    expected.insert(expected.begin() + 1, fl.begin(), fl.end());
     BOOST_TEST(it == x.begin() + 1);
     test_equal(x, expected);
   }
