@@ -149,7 +149,9 @@ Incrementable generalized_next(Incrementable i, Distance n)
 #if !defined(BOOST_CONTAINER_VIRTUAL_VECTOR_NO_RANGES)
   /* a C++20 iterator may lack ::iterator_category */
   if constexpr(std::forward_iterator<Incrementable>) {
-    return std::ranges::next(std::move(i), n);
+    return std::ranges::next(
+      std::move(i), 
+      static_cast<std::iter_difference_t<Incrementable>>(n));
   }
   else
 #endif
@@ -164,7 +166,9 @@ template<
 >
 Incrementable generalized_next(Incrementable i, Distance n)
 {
-  return std::next(i, n);
+  using difference_type = 
+    typename std::iterator_traits<Incrementable>::difference_type;
+  return std::next(i,static_cast<difference_type>(n));
 }
 
 template<typename T>
@@ -415,13 +419,14 @@ public:
     auto       first = dtl::adl_range::adl_begin(rg);
     auto       last = dtl::adl_range::adl_end(rg);
     const auto pb = boost::to_address(data_ptr()),
-               pe = boost::to_address(data_ptr() + size_);
+               pe = boost::to_address(
+                 data_ptr() + static_cast<difference_type>(size_));
     auto       p = pb;
     for( ; p != pe && first != last; ++p, ++first) *p = *first;
     truncate(static_cast<size_type>(p - pb));
     append_range_impl(
       std::move(first), std::move(last), 
-      [this] (T* p, const auto& it) { allocator_construct(al(), p, *it); });
+      [this] (T* p_, const auto& it) { allocator_construct(al(), p_, *it); });
   }
 #endif
 
@@ -442,8 +447,10 @@ public:
 
   iterator               begin() noexcept { return data_ptr(); }
   const_iterator         begin() const noexcept { return data_ptr(); }
-  iterator               end() noexcept { return data_ptr() + size_; }
-  const_iterator         end() const noexcept { return data_ptr() + size_; }
+  iterator               end() noexcept 
+                         { return data_ptr() + static_cast<difference_type>(size_); }
+  const_iterator         end() const noexcept 
+                         { return data_ptr() + static_cast<difference_type>(size_); }
   reverse_iterator       rbegin() noexcept { return reverse_iterator{end()}; }
   const_reverse_iterator rbegin() const noexcept 
                          { return const_reverse_iterator{end()}; }
@@ -522,7 +529,8 @@ public:
   reference emplace_back(Args&&... args)
   {
     if(size_ == capacity()) reserve_for_insertion(1);
-    const auto p = boost::to_address(data_ptr() + size_);
+    const auto p = boost::to_address(
+      data_ptr() + static_cast<difference_type>(size_));
     allocator_construct(al(), p, std::forward<Args>(args)...);
     ++size_;
     return *p;
@@ -545,7 +553,9 @@ public:
   {
     BOOST_ASSERT(!empty());
     --size_;
-    allocator_destroy(al(), boost::to_address(data_ptr() + size_));
+    allocator_destroy(
+      al(), 
+      boost::to_address(data_ptr() + static_cast<difference_type>(size_)));
   }
 
   template<typename... Args> 
@@ -563,7 +573,7 @@ public:
     dtl::scoped_destructor<VirtualAllocator> guard(al(), tmp);
 
     const auto  p = data_ptr() + (pos - begin()),
-                last = data_ptr() + size_;
+                last = data_ptr() + static_cast<difference_type>(size_);
     reserve_for_insertion(1);
     allocator_construct(al(), boost::to_address(last), std::move(*(last - 1)));
     ++size_;
@@ -639,7 +649,7 @@ public:
   {
     BOOST_ASSERT(pos != end());
     const auto p = data_ptr() + (pos - begin()),
-               pe = data_ptr() + size_;
+               pe = data_ptr() + static_cast<difference_type>(size_);
     std::move(p + 1, pe, p);
     pop_back();
     return {p};
@@ -649,7 +659,7 @@ public:
   {
     const auto pf = data_ptr() + (first - begin()),
                pl = data_ptr() + (last - begin()),
-               pe = data_ptr() + size_;
+               pe = data_ptr() + static_cast<difference_type>(size_);
     auto       n = pl - pf;
     if(n != 0) {
       std::move(pl, pe, pf);
@@ -747,7 +757,9 @@ private:
     BOOST_TRY {
       while(first != last) {
         reserve_for_insertion(1);
-        construct_(boost::to_address(data_ptr() + size_), first);
+        construct_(
+          boost::to_address(data_ptr() + static_cast<difference_type>(size_)),
+          first);
         ++size_;
         ++first;
       }
@@ -782,7 +794,9 @@ private:
   {
     reserve_for_insertion(static_cast<size_type>(n));
     while(first != last) {
-      construct_(boost::to_address(data_ptr() + size_), first);
+      construct_(
+        boost::to_address(data_ptr() + static_cast<difference_type>(size_)),
+        first);
       ++size_;
       ++first;
     }
@@ -824,7 +838,8 @@ private:
     Construct construct_, Assign assign_)
   {
     const auto pb = boost::to_address(data_ptr()),
-               pe = boost::to_address(data_ptr() + size_);
+               pe = boost::to_address(
+                 data_ptr() + static_cast<difference_type>(size_));
     auto       p = pb;
     for( ; p != pe && first != last; ++p, ++first) assign_(p, first);
     truncate(static_cast<size_type>(p - pb));
@@ -855,10 +870,10 @@ private:
     std::false_type /* no nondestructive distance */)
   {
     const auto p = data_ptr() + (pos - begin()),
-               mid = data_ptr() + size_;
+               mid = data_ptr() + static_cast<difference_type>(size_);
     append_impl(
       std::move(first), std::move(last), construct_, std::false_type{});
-    std::rotate(p, mid, data_ptr() + size_);
+    std::rotate(p, mid, data_ptr() + static_cast<difference_type>(size_));
     return {p};
   }
 
@@ -896,10 +911,12 @@ private:
        */
     }
     else if(s <= tail) {
-      const auto pe = data_ptr() + size_;
+      const auto pe = data_ptr() + static_cast<difference_type>(size_);
       for(auto q = pe - s; q != pe; ++q) {
         allocator_construct(
-          al(), boost::to_address(data_ptr() + size_), std::move(*q));
+          al(), 
+          boost::to_address(data_ptr() + static_cast<difference_type>(size_)),
+          std::move(*q));
         ++size_;
       }
       std::move_backward(p, pe - s, pe);
@@ -910,12 +927,17 @@ private:
     else {
       auto mid = virtual_vector_detail::generalized_next(first, tail);
       for(auto it = mid; it != last; ++it) {
-        construct_(boost::to_address(data_ptr() + size_), it);
+        construct_(
+          boost::to_address(data_ptr() + static_cast<difference_type>(size_)),
+          it);
         ++size_;
       }
       for(auto q = p; first != mid; ++q, ++first) {
         allocator_construct(
-          al(), boost::to_address(data_ptr() + size_), std::move(*q));
+          al(), 
+          boost::to_address(
+            data_ptr() + static_cast<difference_type>(size_)),
+          std::move(*q));
         ++size_;
         assign_(boost::to_address(q), first);
       }
@@ -935,7 +957,9 @@ private:
       if(n > capacity()) reserve(n);
       BOOST_TRY {
         while(size_ < n) {
-          construct_(boost::to_address(data_ptr() + size_));
+          construct_(
+            boost::to_address(
+              data_ptr() + static_cast<difference_type>(size_)));
           ++size_;
         }
       }

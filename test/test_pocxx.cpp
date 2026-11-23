@@ -17,7 +17,7 @@
 
 struct stateful_virtual_allocator_call_count_record
 {
-  int num_reserves = 0, num_releases = 0;
+  std::size_t num_reserves = 0, num_releases = 0;
 };
 
 template<typename T, bool Pocca, bool Pocma, bool Pocs, bool AlwaysEqual>
@@ -114,7 +114,7 @@ struct stateful_virtual_allocator: boost::container::virtual_allocator<T>
     return active_reservations().size();
   }
 
-  int num_reserve_calls() { return call_count->num_reserves; }
+  std::size_t num_reserve_calls() { return call_count->num_reserves; }
 
   int state;
 

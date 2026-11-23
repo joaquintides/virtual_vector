@@ -359,7 +359,7 @@ void test()
     x.assign_range(rng);
     test_equal(x, rng);
     std::vector<typename Vector::value_type> short_rng(
-      rng.begin(), rng.begin() + rng.size() / 2);
+      rng.begin(), rng.begin() + (difference_type)(rng.size() / 2));
     x.assign_range(short_rng);
     test_equal(x, short_rng);
     x.assign_range(rng);
@@ -551,8 +551,10 @@ void test()
     test_equal(x, rng);
     x.append_range(rng);
     BOOST_TEST_EQ(x.size(), 2 * rng.size());
-    BOOST_TEST(std::equal(x.begin(), x.begin() + rng.size(), rng.begin()));
-    BOOST_TEST(std::equal(x.begin() + rng.size(), x.end(), rng.begin()));
+    BOOST_TEST(
+      std::equal(x.begin(), x.begin() + (difference_type)rng.size(), rng.begin()));
+    BOOST_TEST(
+      std::equal(x.begin() + (difference_type)rng.size(), x.end(), rng.begin()));
   }
 #endif
   {
@@ -622,12 +624,14 @@ void test()
     auto it = x.insert(x.cend(), rng.begin(), rng.begin());
     BOOST_TEST(x.empty());
     BOOST_TEST(it == x.cend());
-    it = x.insert(x.end(), rng.begin() + rng.size() * 2 / 3, rng.end());
+    it = x.insert(
+      x.end(), rng.begin() + (difference_type)(rng.size() * 2 / 3), rng.end());
     it = x.insert(it, rng.begin(), rng.begin() + rng.size() * 1 / 3);
     it = x.insert(
       it + rng.size() * 1 / 3,
-      rng.begin() + rng.size() * 1 / 3, rng.begin() + rng.size() * 2 / 3);
-    BOOST_TEST_EQ(it - x.cbegin(), rng.size() * 1 / 3);
+      rng.begin() + (difference_type)(rng.size() * 1 / 3),
+      rng.begin() + (difference_type)(rng.size() * 2 / 3));
+    BOOST_TEST_EQ(it - x.cbegin(), (difference_type)(rng.size() * 1 / 3));
     test_equal(x, rng);
   }
 #if !defined(BOOST_CONTAINER_VIRTUAL_VECTOR_NO_RANGES)
@@ -637,7 +641,7 @@ void test()
     test_equal(x, rng);
     x.insert_range(x.cbegin() + 1, rng);
     x.erase(x.cbegin());
-    x.erase(x.cbegin() + rng.size(), x.cend());
+    x.erase(x.cbegin() + (difference_type)rng.size(), x.cend());
     test_equal(x, rng);
   }
 #endif
@@ -647,7 +651,7 @@ void test()
     test_equal(x, il);
     x.insert(x.cbegin() + 1, il);
     x.erase(x.cbegin());
-    x.erase(x.cbegin() + il.size(), x.cend());
+    x.erase(x.cbegin() + (difference_type)il.size(), x.cend());
     test_equal(x, il);
   }
   {
@@ -661,7 +665,7 @@ void test()
     it = x.erase(x.cend() - 1, x.cend() - 1);
     BOOST_TEST_EQ(x.size(), rng.size() - 1);
     BOOST_TEST(it == x.cend() - 1);
-    it = x.erase(x.cbegin() + x.size() / 2, x.cend());
+    it = x.erase(x.cbegin() + (difference_type)(x.size() / 2), x.cend());
     BOOST_TEST_EQ(x.size(), (rng.size() - 1) / 2);
     BOOST_TEST(it == x.cend());
   }
@@ -680,7 +684,8 @@ void test()
   }
   {
     Vector x0{mc, rng.begin(), rng.end()},
-           y0{mc, rng.begin(), rng.begin() + rng.size() / 2},
+           y0{
+             mc, rng.begin(), rng.begin() + (difference_type)(rng.size() / 2)},
            x = x0, y = y0;
     x.swap(x);
     BOOST_TEST(x == x0);
@@ -737,7 +742,9 @@ void test()
   /* comparison */
   {
     const Vector x1{mc},
-                 x2{mc, rng.begin(), rng.begin() + rng.size()/2},
+                 x2{
+                   mc, 
+                   rng.begin(), rng.begin() + (difference_type)(rng.size()/2)},
                  x3{mc, rng.begin(), rng.end()};
     BOOST_TEST(  x1 == x1 ); BOOST_TEST(!(x1 == x2)); BOOST_TEST(!(x1 == x3));
     BOOST_TEST(!(x2 == x1)); BOOST_TEST(  x2 == x2 ); BOOST_TEST(!(x2 == x3));
