@@ -234,9 +234,10 @@ public:
       boost::throw_exception(std::bad_alloc()); // TODO: std::length_error?
     }
     const auto bytes = n * sizeof(T);
-    void*      data = virtual_allocator_detail::reserve(bytes, alignof(T));
-    if(!data) boost::throw_exception(std::bad_alloc());
-    return reservation_handle{static_cast<pointer>(data)};
+    void*      data_ = virtual_allocator_detail::reserve(
+                 bytes, alignof(T));
+    if(!data_) boost::throw_exception(std::bad_alloc());
+    return reservation_handle{static_cast<pointer>(data_)};
   }
 
   BOOST_CONTAINER_NODISCARD 
