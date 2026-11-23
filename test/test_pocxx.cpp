@@ -137,6 +137,11 @@ private:
   std::shared_ptr<stateful_virtual_allocator_call_count_record> call_count;
 };
 
+#if defined(BOOST_MSVC)
+#pragma warning(push)
+#pragma warning(disable:4127) /* conditional expression is constant */
+#endif
+
 template<bool Pocca, bool Pocma, bool Pocs, bool AlwaysEqual>
 void test(int src_state, std::size_t dst_mc, std::size_t src_mc)
 {
@@ -243,6 +248,10 @@ void test(int src_state, std::size_t dst_mc, std::size_t src_mc)
 
   BOOST_TEST_EQ(allocator_type::num_active_reservations(), 0);
 }
+
+#if defined(BOOST_MSVC)
+#pragma warning(pop) /* C4127 */
+#endif
 
 struct invoke_tests
 {

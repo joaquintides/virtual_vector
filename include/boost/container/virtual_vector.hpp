@@ -318,6 +318,11 @@ public:
 
   ~virtual_vector() { reset(); }
 
+#if defined(BOOST_MSVC)
+#pragma warning(push)
+#pragma warning(disable:4127) /* conditional expression is constant */
+#endif
+
   virtual_vector& operator=(const virtual_vector& x)
   {
     using pocca =
@@ -379,6 +384,10 @@ public:
     }
     return *this;
   }
+
+#if defined(BOOST_MSVC)
+#pragma warning(pop) /* C4127 */
+#endif
 
   virtual_vector& operator=(std::initializer_list<T> il)
   {
