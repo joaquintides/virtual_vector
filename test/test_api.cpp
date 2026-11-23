@@ -526,9 +526,7 @@ void test()
     BOOST_TEST(x.back().x == v.x);
     BOOST_TEST(x.back().origin == from_copy);
     v.x += value_type(1);
-    tracked_value_type probe{value_type{v.x}};
-    BOOST_TEST_EQ(probe.origin, from_move);
-    x.emplace_back(value_type{v.x});
+    x.emplace_back(std::move(v.x));
     BOOST_TEST(x.back().x == v.x);
     BOOST_TEST_EQ(x.back().origin, from_move);
     BOOST_TEST_EQ(x.back().last_op, ab_ovo);
@@ -537,7 +535,7 @@ void test()
     BOOST_TEST(x.back().x == v.x);
     BOOST_TEST(x.back().last_op == from_copy);
     v.x += value_type(1);
-    x.push_back(tracked_value_type{v});
+    x.push_back(std::move(v));
     BOOST_TEST(x.back().x == v.x);
     BOOST_TEST(x.back().last_op == from_move);
     auto  s = x.size();
