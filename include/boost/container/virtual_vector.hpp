@@ -485,14 +485,16 @@ public:
 
   void shrink_to_fit() { reserve(size_); }
 
-  reference       operator[](size_type n) { return data_ptr()[n]; }
-  const_reference operator[](size_type n) const { return data_ptr()[n]; }
+  reference       operator[](size_type n)
+                  { return data_ptr()[static_cast<difference_type>(n)]; }
+  const_reference operator[](size_type n) const
+                  { return data_ptr()[static_cast<difference_type>(n)]; }
 
   reference at(size_type n)
   {
     if(n >= size_) boost::throw_exception(
       std::out_of_range("boost::container::virtual_vector::at"));
-    return (*this)[n];
+    return (*this)[static_cast<difference_type>(n)];
   }
 
   const_reference at(size_type n) const
@@ -514,7 +516,7 @@ public:
   reference back()
   {
     BOOST_ASSERT(!empty());
-    return data_ptr()[size_ - 1];
+    return data_ptr()[static_cast<difference_type>(size_ - 1)];
   }
 
   const_reference back() const

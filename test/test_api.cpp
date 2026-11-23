@@ -711,21 +711,24 @@ void test()
     std::istringstream in{"1 2 3 4"};
     Vector x{
       mc,
-      std::istream_iterator<int>(in), std::istream_iterator<int>()};
+      std::istream_iterator<value_type>(in),
+      std::istream_iterator<value_type>()};
     std::vector<value_type> expected{1, 2, 3, 4};
     test_equal(x, expected);
 
     std::istringstream more{"7 8"};
     auto it = x.insert(
       x.cbegin() + 2,
-      std::istream_iterator<int>(more), std::istream_iterator<int>());
+      std::istream_iterator<value_type>(more),
+      std::istream_iterator<value_type>());
     expected.insert(expected.begin() + 2, {7, 8});
     BOOST_TEST(it == x.begin() + 2);
     test_equal(x, expected);
 
     std::istringstream replacement{"5 6"};
     x.assign(
-      std::istream_iterator<int>(replacement), std::istream_iterator<int>());
+      std::istream_iterator<value_type>(replacement),
+      std::istream_iterator<value_type>());
     test_equal(x, std::vector<value_type>{5, 6});
   }
   {
