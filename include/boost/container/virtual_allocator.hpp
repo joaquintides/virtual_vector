@@ -21,10 +21,11 @@
 #include <new>
 #include <type_traits>
 
-#if defined(_WIN32)
-#define BOOST_CONTAINER_VIRTUAL_ALLOCATOR_WINDOWS
-#elif defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
+#if defined(__linux__) || (defined(__APPLE__) && defined(__MACH__)) || \
+    defined(__CYGWIN__)
 #define BOOST_CONTAINER_VIRTUAL_ALLOCATOR_POSIX
+#elif defined(_WIN32) /* must be after previous because of Cygwin */
+#define BOOST_CONTAINER_VIRTUAL_ALLOCATOR_WINDOWS
 #else
 #error "boost::container::virtual_allocator: unsupported platform"
 #endif
