@@ -1,0 +1,20 @@
+on:
+  pull_request:
+  push:
+    paths-ignore:
+      - README.md
+
+jobs: 
+  call-boost-ci:
+    with:
+      library_folder: virtual_vector
+      b2_targets: libs/virtual_vector/test
+      enable_cmake: false
+      enable_cygwin: false
+      enable_mingw: false
+      enable_multiarch: false
+      enable_32bit: false
+      exclude_jobs: |
+        coverage: yes
+    name: Run Boost.CI
+    uses: boostorg/boost-ci/.github/workflows/reusable.yml@master
