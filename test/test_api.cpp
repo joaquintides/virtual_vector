@@ -526,9 +526,12 @@ void test()
     BOOST_TEST(x.back().x == v.x);
     BOOST_TEST(x.back().origin == from_copy);
     v.x += value_type(1);
+    tracked_value_type probe{value_type{v.x}};
+    BOOST_TEST_EQ(probe.origin, from_move);
     x.emplace_back(value_type{v.x});
     BOOST_TEST(x.back().x == v.x);
-    BOOST_TEST(x.back().origin == from_move);
+    BOOST_TEST_EQ(x.back().origin, from_move);
+    BOOST_TEST_EQ(x.back().last_op, ab_ovo);
     v.x += value_type(1);
     x.push_back(v);
     BOOST_TEST(x.back().x == v.x);
@@ -700,7 +703,7 @@ void test()
     BOOST_TEST(x.empty());
   }
 
-  /* input from non-forward iterators supported */
+  /* input from non-random-access iterators supported */
   {
     std::istringstream in{"1 2 3 4"};
     Vector x{
