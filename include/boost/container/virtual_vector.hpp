@@ -914,7 +914,7 @@ private:
     }
     else if(s <= tail) {
       const auto pe = data_ptr() + static_cast<difference_type>(size_);
-      for(auto q = pe - s; q != pe; ++q) {
+      for(auto q = pe - static_cast<difference_type>(s); q != pe; ++q) {
         allocator_construct(
           al(), 
           boost::to_address(data_ptr() + static_cast<difference_type>(size_)),
