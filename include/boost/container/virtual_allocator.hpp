@@ -24,7 +24,7 @@
 #if defined(__linux__) || (defined(__APPLE__) && defined(__MACH__)) || \
     defined(__CYGWIN__)
 #define BOOST_CONTAINER_VIRTUAL_ALLOCATOR_POSIX
-#elif defined(_WIN32) /* must be after previous because of Cygwin */
+#elif defined(_WIN32) /* must go after previous because of Cygwin */
 #define BOOST_CONTAINER_VIRTUAL_ALLOCATOR_WINDOWS
 #else
 #error "boost::container::virtual_allocator: unsupported platform"
