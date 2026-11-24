@@ -86,7 +86,6 @@ struct stateful_virtual_allocator: boost::container::virtual_allocator<T>
   using const_reference = typename reference_or_void<const T>::type;
   using const_void_pointer = const void*;
   using difference_type = std::ptrdiff_t;
-  using size_type = std::size_t;
 
   template<typename U>
   struct rebind 
