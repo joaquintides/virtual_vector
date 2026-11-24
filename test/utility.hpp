@@ -50,6 +50,10 @@ void test_equal(const Container1& x, const Container2& y)
   }
 }
 
+template<typename T> struct reference_or_void { using type = T&; };
+template<> struct reference_or_void<void> { using type = void; };
+template<> struct reference_or_void<const void> { using type = const void; };
+
 struct stateful_virtual_allocator_call_count_record
 {
   std::size_t num_allocates = 0, num_reserves = 0, num_releases = 0;
@@ -74,6 +78,15 @@ struct stateful_virtual_allocator: boost::container::virtual_allocator<T>
   using propagate_on_container_swap =
     std::integral_constant<bool, Pocs>;
   using is_always_equal = std::integral_constant<bool, AlwaysEqual>;
+
+  /* typedefs required by not quite C++11-conformant GCC < 5 stdlib */
+  using const_pointer = const T*;
+  using void_pointer = void*;
+  using reference = typename reference_or_void<T>::type;
+  using const_reference = typename reference_or_void<const T>::type;
+  using const_void_pointer = const void*;
+  using difference_type = std::ptrdiff_t;
+  using size_type = std::size_t;
 
   template<typename U>
   struct rebind 
