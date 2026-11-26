@@ -4,6 +4,8 @@
  * http://www.boost.org/LICENSE_1_0.txt)
  */
 
+#include <boost/config.hpp>
+#include <boost/config/workaround.hpp>
 #include <boost/container/virtual_allocator.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <cstddef>
@@ -38,13 +40,12 @@ void test_empty()
   al.release(h, 1);
 }
 
-struct three_bytes
-{
-  char bytes[3];
-};
-
 void test_rounding()
 {
+  struct three_bytes
+  {
+    char bytes[3];
+  };
   using allocator_type = boost::container::virtual_allocator<three_bytes>;
 
   const auto     n = retrieved_page_size / sizeof(three_bytes) + 2;
@@ -114,13 +115,15 @@ void test_resize()
   al.release(h, n);
 }
 
-struct alignas(8192) over_aligned
-{
-  char data[8192];
-};
-
 void test_alignment()
 {
+#if !BOOST_WORKAROUND(BOOST_GCC, < 70000)
+   /* GCC <= 6 doesn't support alignments this large */
+
+  struct alignas(8192) over_aligned
+  {
+    char data[8192];
+  };
   using allocator_type = boost::container::virtual_allocator<over_aligned>;
 
   allocator_type    al;
@@ -160,6 +163,7 @@ void test_alignment()
   p[2].~over_aligned();
 
   al.release(h, n);
+#endif
 }
 
 void test_large_alignment()
