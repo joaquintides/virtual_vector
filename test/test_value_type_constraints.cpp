@@ -4,7 +4,23 @@
  * http://www.boost.org/LICENSE_1_0.txt)
  */
 
+#include <boost/config.hpp>
+
+#if defined(BOOST_GCC) && defined(__SSP__)
+/* Irrelevant stack-protector warning triggered in virtual_vector's positional
+ * emplace/insert for small value types, due to a stack-allocated,
+ * allocator-constructed anti-aliasing temporary.
+ */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstack-protector"
+#endif
+
 #include <boost/container/virtual_vector.hpp>
+
+#if defined(BOOST_GCC) && defined(__SSP__)
+#pragma GCC diagnostic pop
+#endif
+
 #include <utility>
 
 using boost::container::virtual_vector;
