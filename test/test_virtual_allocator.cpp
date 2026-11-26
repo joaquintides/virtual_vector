@@ -11,7 +11,7 @@
 #include <limits>
 #include <new>
 
-static const auto page = 
+static const auto retrieved_page_size = 
   boost::container::virtual_allocator_detail::page_size();
 
 void test_empty()
@@ -47,13 +47,13 @@ void test_rounding()
 {
   using allocator_type = boost::container::virtual_allocator<three_bytes>;
 
-  const auto     n = page / sizeof(three_bytes) + 2;
+  const auto     n = retrieved_page_size / sizeof(three_bytes) + 2;
   allocator_type al;
   auto           h = al.reserve(n);
 
   BOOST_TEST(h);
   h = al.resize(h, n, 1);
-  BOOST_TEST_EQ(al.size(h), page / sizeof(three_bytes));
+  BOOST_TEST_EQ(al.size(h), retrieved_page_size / sizeof(three_bytes));
   h = al.resize(h, n, n);
   BOOST_TEST_EQ(al.size(h), n);
   al.release(h, n);
@@ -63,7 +63,7 @@ void test_resize()
 {
   using allocator_type = boost::container::virtual_allocator<char>;
 
-  const auto     n = 3 * page + 17;
+  const auto     n = 3 * retrieved_page_size + 17;
   allocator_type al;
   auto           h = al.reserve(n);
   auto           p = al.data(h);
@@ -73,29 +73,29 @@ void test_resize()
   BOOST_TEST_EQ(al.size(h), 0u);
 
   h = al.resize(h, n, 1);
-  BOOST_TEST_EQ(al.size(h), page);
+  BOOST_TEST_EQ(al.size(h), retrieved_page_size);
   BOOST_TEST(al.data(h) == p);
   p[0] = 'a';
-  p[page - 1] = 'b';
+  p[retrieved_page_size - 1] = 'b';
 
-  h = al.resize(h, n, page + 1);
-  BOOST_TEST_EQ(al.size(h), 2 * page);
+  h = al.resize(h, n, retrieved_page_size + 1);
+  BOOST_TEST_EQ(al.size(h), 2 * retrieved_page_size);
   BOOST_TEST(al.data(h) == p);
   BOOST_TEST_EQ(p[0], 'a');
-  BOOST_TEST_EQ(p[page - 1], 'b');
-  p[page] = 'c';
-  p[2 * page - 1] = 'd';
+  BOOST_TEST_EQ(p[retrieved_page_size - 1], 'b');
+  p[retrieved_page_size] = 'c';
+  p[2 * retrieved_page_size - 1] = 'd';
 
-  h = al.resize(h, n, 3 * page + 1);
+  h = al.resize(h, n, 3 * retrieved_page_size + 1);
   BOOST_TEST_EQ(al.size(h), n);
   BOOST_TEST(al.data(h) == p);
-  p[3 * page] = 'e';
+  p[3 * retrieved_page_size] = 'e';
   p[n - 1] = 'f';
 
-  h = al.resize(h, n, page + 1);
-  BOOST_TEST_EQ(al.size(h), 2 * page);
-  BOOST_TEST_EQ(p[page], 'c');
-  BOOST_TEST_EQ(p[2 * page - 1], 'd');
+  h = al.resize(h, n, retrieved_page_size + 1);
+  BOOST_TEST_EQ(al.size(h), 2 * retrieved_page_size);
+  BOOST_TEST_EQ(p[retrieved_page_size], 'c');
+  BOOST_TEST_EQ(p[2 * retrieved_page_size - 1], 'd');
 
   h = al.resize(h, n, 0);
   BOOST_TEST_EQ(al.size(h), 0u);
@@ -105,10 +105,10 @@ void test_resize()
   BOOST_TEST_EQ(al.size(h), n);
   BOOST_TEST(al.data(h) == p);
   p[0] = 'x';
-  p[page] = 'y';
+  p[retrieved_page_size] = 'y';
   p[n - 1] = 'z';
   BOOST_TEST_EQ(p[0], 'x');
-  BOOST_TEST_EQ(p[page], 'y');
+  BOOST_TEST_EQ(p[retrieved_page_size], 'y');
   BOOST_TEST_EQ(p[n - 1], 'z');
 
   al.release(h, n);
