@@ -977,7 +977,7 @@ void test_insertion()
     [] (virtual_vector& x) {
       const std::vector<int> src(40, 42);
       auto rg = make_throwing_input_range(src);
-      x.insert_range(x.begin() + 2, rg);
+      x.insert_range(x.end() - 2, rg);
     },
     failure_point::construction, guarantee::basic);
 #endif
