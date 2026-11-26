@@ -118,7 +118,7 @@ struct throwing_virtual_allocator:
   template<typename U>
   struct rebind { using other = throwing_virtual_allocator<U>; };
 
-  throwing_virtual_allocator(int state = 0): base{state} {}
+  throwing_virtual_allocator(int state_ = 0): base{state_} {}
 
   template<typename U>
   throwing_virtual_allocator(const throwing_virtual_allocator<U>& x):
