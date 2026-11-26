@@ -118,7 +118,7 @@ void test_resize()
 void test_alignment()
 {
 #if !BOOST_WORKAROUND(BOOST_GCC, < 70000)
-   /* GCC <= 6 doesn't support alignments this large */
+  /* GCC <= 6 doesn't support alignments this large */
 
   struct alignas(8192) over_aligned
   {
@@ -168,7 +168,7 @@ void test_alignment()
 
 void test_large_alignment()
 {
-  /* Such a large alignment as 128 * 1024 is not even supported by some
+  /* Such a large alignment as 128 * 1024 is not even supported by most
    * compilers, so we white-box test it. Exercises internal code branches
    * not visited for smaller alignments.
    */
