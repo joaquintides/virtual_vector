@@ -136,8 +136,8 @@ void test_alignment()
   h = al.resize(h, n, 2);
   BOOST_TEST_GE(al.size(h), 2u);
   BOOST_TEST(al.data(h) == p);
-  ::new (static_cast<void*>(p)) over_aligned{};
-  ::new (static_cast<void*>(p + 1)) over_aligned{};
+  ::new (static_cast<void*>(p)) over_aligned;
+  ::new (static_cast<void*>(p + 1)) over_aligned;
   p[0].data[0] = 'a';
   p[1].data[0] = 'b';
   BOOST_TEST_EQ(p[0].data[0], 'a');
@@ -154,7 +154,7 @@ void test_alignment()
   h = al.resize(h, n, n);
   BOOST_TEST_EQ(al.size(h), n);
   BOOST_TEST(al.data(h) == p);
-  ::new (static_cast<void*>(p + 2)) over_aligned{};
+  ::new (static_cast<void*>(p + 2)) over_aligned;
   p[2].data[0] = 'c';
   BOOST_TEST_EQ(p[2].data[0], 'c');
   p[2].~over_aligned();
