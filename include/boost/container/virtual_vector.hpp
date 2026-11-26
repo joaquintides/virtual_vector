@@ -97,10 +97,10 @@ using range_sentinel_t =
   decltype(dtl::adl_range::adl_end(std::declval<R&>()));
 
 template<class R>
-using range_reference_t = std::iter_reference_t<range_iterator_t<R> >;
+using range_reference_t = std::iter_reference_t<range_iterator_t<R>>;
 
 template<class R>
-using range_value_t = std::iter_value_t<range_iterator_t<R> >;
+using range_value_t = std::iter_value_t<range_iterator_t<R>>;
 
 template<class R>
 concept input_range_like =
@@ -1006,7 +1006,7 @@ virtual_vector(Size, std::initializer_list<T>, VirtualAllocator)
 #if !defined(BOOST_CONTAINER_VIRTUAL_VECTOR_NO_RANGES)
 template<typename Size, virtual_vector_detail::input_range_like R>
 virtual_vector(Size, from_range_t, R&&)
-  -> virtual_vector<virtual_vector_detail::range_value_t<R> >;
+  -> virtual_vector<virtual_vector_detail::range_value_t<R>>;
 
 template<
   typename Size, virtual_vector_detail::input_range_like R,
