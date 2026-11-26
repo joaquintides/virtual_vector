@@ -53,5 +53,6 @@ project
   ;
 
 run test_api.cpp ;
+run test_exception_safety.cpp ;
 run test_pocxx.cpp ;
 run test_uses_allocator.cpp ;
