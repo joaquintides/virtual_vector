@@ -291,7 +291,10 @@ public:
       x, allocator_select_on_container_copy_construction(x.al())} {}
 
   virtual_vector(virtual_vector&& x) noexcept:
-    virtual_vector{std::move(x), VirtualAllocator(std::move(x.al()))}{}
+    virtual_vector{size_type(0), VirtualAllocator(std::move(x.al()))}
+  {
+    transfer_from(x);
+  }
 
   virtual_vector(
     const virtual_vector& x, 
