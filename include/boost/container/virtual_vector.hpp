@@ -533,11 +533,12 @@ public:
   template<typename... Args>
   reference emplace_back(Args&&... args)
   {
-    if(size_ == capacity()) reserve_for_insertion(1);
+    const auto s = size_;
+    if(s == capacity()) reserve_for_insertion(1);
     const auto p = boost::to_address(
-      data_ptr() + static_cast<difference_type>(size_));
+      data_ptr() + static_cast<difference_type>(s));
     allocator_construct(al(), p, std::forward<Args>(args)...);
-    ++size_;
+    size_ = s + 1;
     return *p;
   }
 
