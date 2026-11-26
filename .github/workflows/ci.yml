@@ -10,7 +10,6 @@ jobs:
       library_folder: virtual_vector
       b2_targets: libs/virtual_vector/test
       enable_cmake: false
-      enable_32bit: false
       exclude_jobs: |
         coverage: yes
     name: Run Boost.CI
